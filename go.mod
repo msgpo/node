@@ -15,7 +15,8 @@ require (
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e
 	github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/ethereum/go-ethereum v1.9.6
+	github.com/elastic/gosigar v0.10.5 // indirect
+	github.com/ethereum/go-ethereum v1.9.15
 	github.com/frankban/quicktest v1.5.0 // indirect
 	github.com/gballet/go-libpcsclite v0.0.0-20191108122812-4678299bea08 // indirect
 	github.com/gin-contrib/cors v1.3.0
@@ -25,6 +26,7 @@ require (
 	github.com/huin/goupnp v1.0.0
 	github.com/jackpal/gateway v1.0.5
 	github.com/jackpal/go-nat-pmp v1.0.2 // indirect
+	github.com/joincivil/go-common v0.0.0-20191010210240-88ecdf41b6b6 // indirect
 	github.com/julienschmidt/httprouter v1.2.0
 	github.com/karalabe/usb v0.0.0-20191104083709-911d15fe12a9 // indirect
 	github.com/klauspost/compress v1.10.5 // indirect
@@ -40,7 +42,7 @@ require (
 	github.com/mysteriumnetwork/go-openvpn v0.0.23
 	github.com/mysteriumnetwork/go-wondershaper v1.0.1
 	github.com/mysteriumnetwork/metrics v0.0.3
-	github.com/mysteriumnetwork/payments v0.0.14-0.20200615024917-31bd2215aeaa
+	github.com/mysteriumnetwork/payments v0.0.14-0.20200616085945-bda8f13f9ec5
 	github.com/nats-io/nats-server/v2 v2.1.7
 	github.com/nats-io/nats.go v1.10.0
 	github.com/nwaples/rardecode v1.1.0 // indirect

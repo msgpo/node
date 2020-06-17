@@ -53,7 +53,7 @@ func subscribeSessionCreate(mng *session.Manager, ch p2p.Channel, service Servic
 		consumerConfig := sr.GetConfig()
 		consumerInfo := session.ConsumerInfo{
 			IssuerID:       consumerID,
-			AccountantID:   identity.FromAddress(sr.GetConsumer().GetAccountantID()),
+			HermesID:       identity.FromAddress(sr.GetConsumer().GetHermesID()),
 			PaymentVersion: session.PaymentVersion(sr.GetConsumer().GetPaymentVersion()),
 		}
 

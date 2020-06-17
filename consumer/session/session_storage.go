@@ -161,7 +161,7 @@ func (repo *Storage) handleCreatedEvent(session connection.Status) {
 	row := History{
 		SessionID:       session.SessionID,
 		ConsumerID:      session.ConsumerID,
-		AccountantID:    session.AccountantID.Hex(),
+		HermesID:        session.HermesID.Hex(),
 		ProviderID:      identity.FromAddress(session.Proposal.ProviderID),
 		ServiceType:     session.Proposal.ServiceType,
 		ProviderCountry: session.Proposal.ServiceDefinition.GetLocation().Country,
