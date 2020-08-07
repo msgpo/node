@@ -32,6 +32,7 @@ import (
 	"github.com/mysteriumnetwork/node/core/ip"
 	"github.com/mysteriumnetwork/node/eventbus"
 	"github.com/mysteriumnetwork/node/identity"
+	"github.com/mysteriumnetwork/node/identity/registry"
 	"github.com/mysteriumnetwork/node/metadata"
 )
 
@@ -68,13 +69,14 @@ func (m *MMN) CollectEnvironmentInformation() error {
 }
 
 // SubscribeToIdentityUnlockRegisterToMMN subscribes to identity unlock, registers identity in MMN if the API key is set
-func (m *MMN) SubscribeToIdentityUnlockRegisterToMMN(eventBus eventbus.EventBus, isRegistrationEnabled func() bool) error {
+func (m *MMN) SubscribeToIdentityUnlockRegisterToMMN(eventBus eventbus.EventBus,
+	isRegistrationEnabled func(id string) bool) error {
 	return eventBus.SubscribeAsync(
 		identity.AppTopicIdentityUnlock,
 		func(identity string) {
 			m.node.Identity = identity
 
-			if !isRegistrationEnabled() {
+			if !isRegistrationEnabled(identity) {
 				log.Debug().Msg("Identity unlocked, " +
 					"registration to MMN disabled because the API key missing in config.")
 
@@ -83,6 +85,28 @@ func (m *MMN) SubscribeToIdentityUnlockRegisterToMMN(eventBus eventbus.EventBus,
 
 			if err := m.Register(); err != nil {
 				log.Error().Msgf("Failed to register identity to MMN: %v", err)
+			}
+		},
+	)
+}
+
+// SubscribeToIdentityRegistration subscribes to identity registration to blockchain
+func (m *MMN) SubscribeToIdentityRegistration(eventBus eventbus.EventBus) error {
+	return eventBus.SubscribeAsync(
+		registry.AppTopicIdentityRegistration,
+		func(reg registry.AppEventIdentityRegistration) {
+			log.Error().Msgf("MMN ID REg")
+
+			if reg.Status != registry.RegisteredProvider {
+				log.Error().Msgf("MMN not registered provider")
+
+				return
+			}
+
+			m.node.Identity = reg.ID.Address
+
+			if err := m.Register(); err != nil {
+				log.Error().Msgf("Failed to register identity to MMN2: %v", err)
 			}
 		},
 	)

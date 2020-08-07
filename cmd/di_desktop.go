@@ -29,6 +29,7 @@ import (
 	"github.com/mysteriumnetwork/node/core/port"
 	"github.com/mysteriumnetwork/node/core/service"
 	"github.com/mysteriumnetwork/node/core/service/servicestate"
+	"github.com/mysteriumnetwork/node/identity"
 	"github.com/mysteriumnetwork/node/identity/registry"
 	"github.com/mysteriumnetwork/node/market"
 	"github.com/mysteriumnetwork/node/mmn"
@@ -305,16 +306,34 @@ func (di *Dependencies) bootstrapUIServer(options node.Options) (err error) {
 func (di *Dependencies) bootstrapMMN(options node.Options) {
 	client := mmn.NewClient(di.HTTPClient, options.MMN.Address, di.SignerFactory)
 	m := mmn.NewMMN(di.IPResolver, client)
-
 	if err := m.CollectEnvironmentInformation(); err != nil {
 		log.Error().Msgf("Failed to collect environment information for MMN: %v", err)
 	}
 
 	apiKey := config.Current.GetString("mmn.api-key")
-	isRegistrationEnabled := func() bool {
-		return len(config.Current.GetString("mmn.api-key")) != 0
+	isRegistrationEnabled := func(id string) bool {
+		status, err := di.IdentityRegistry.GetRegistrationStatus(identity.FromAddress(id))
+		if err != nil {
+			log.Error().Msgf("MMN registration check error, BC status check failed", err)
+
+			return false
+		}
+
+		if status != registry.RegisteredProvider {
+			log.Error().Msgf("MMN registration check error, not a provider: %d", status)
+
+			return false
+		}
+
+		// TODO replace this with an apiKey check once new WebUI is live
+		return true
 	}
+
 	if err := m.SubscribeToIdentityUnlockRegisterToMMN(di.EventBus, isRegistrationEnabled); err != nil {
+		log.Error().Msgf("Failed to subscribe to events for MMN: %v", err)
+	}
+
+	if err := m.SubscribeToIdentityRegistration(di.EventBus); err != nil {
 		log.Error().Msgf("Failed to subscribe to events for MMN: %v", err)
 	}
 
